@@ -1,5 +1,9 @@
+..
+
+
+===============================================================================
 Metro
-=====
+===============================================================================
 
 Metro is a somewhat complex set of shell and python scripts and various files
 used to build install and LiveCD media for Gentoo Linux and its derivatives
@@ -7,8 +11,10 @@ used to build install and LiveCD media for Gentoo Linux and its derivatives
 
 TL;DR: `Quick Start Tutorial <http://www.funtoo.org/wiki/Metro_Quick_Start_Tutorial>`_
 
+
+-------------------------------------------------------------------------------
 How Metro Works
----------------
+-------------------------------------------------------------------------------
 
 You may be wondering how Metro creates its first stage tarball. As you may have
 guessed, Metro cannot create a stage tarball out of thin air. To build a new
@@ -22,6 +28,11 @@ is used to build a new stage2, and then a new stage3. This is generally the
 most reliable way to build Gentoo Linux or Funtoo Linux, so it's the
 recommended approach.
 
+.. contents::
+   :local:
+   :backlinks: top
+
+
 Seeds and Build Isolation
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,6 +43,7 @@ stage and a portage snapshot -- you will get consistent, repeatable results. In
 other words, the same seed stage, portage snapshot and build instructions will
 generate an essentially identical result, even if you perform the build a month
 later on someone else's workstation.
+
 
 Local Build
 ~~~~~~~~~~~
@@ -55,12 +67,14 @@ Metro to use the most-recently-built ``pentium4`` stage3 as the seed. Metro has
 built-in functionality to make this easy, allowing it to easily find and track
 the most recent stage3 seed available.
 
+
 Remote Build
 ~~~~~~~~~~~~
 
 Metro can also perform a *remote build*, where a stage3 of a different, but binary
 compatible, architecture is used as a seed to build a different architecture
 stage3.
+
 
 Tailored Build
 ~~~~~~~~~~~~~~
@@ -70,8 +84,10 @@ be configured to add and/or remove individual packages to the final tarball.
 Let's say you can't live without app-misc/screen, at the end of this tutorial,
 we will show how to have your tailored stage3 to include it.
 
+
+-------------------------------------------------------------------------------
 Metro Data Model
-----------------
+-------------------------------------------------------------------------------
 
 The Metro Data Model has been designed to provide you with an optimal way to
 organize build data.
@@ -82,6 +98,7 @@ Here are the primary goals for the data model:
 * Use mechanisms and syntax that maximize maintainability of the data over
   time
 * Reduce and (ideally) eliminate side-effects at every opportunity
+
 
 To attain these goals, Metro uses a functional data model, where an element
 (variable) can be defined only once, and cannot be redefined.
@@ -97,12 +114,14 @@ was done to eliminate side-effects related to data ordering, where changing the
 order in which things are defined in a file can change the behavior of or break
 your code.
 
+
 First Look
 ~~~~~~~~~~
 
 Here is some sample Metro data::
 
   path: /usr/bin
+
 
 Above, we have defined the element ``path`` to have the value ``/usr/bin``.
 ``path`` is a single-line element, and the Metro parser takes care of trimming
@@ -124,6 +143,7 @@ follows::
   path/mirror/snapshot: /home/mirror/linux/snapshots
   path/metro: /usr/lib/metro
 
+
 Above, we see the proper Metro convention for specifying paths. Each path has a
 prefix of ``path/``. We have a ``path/mirror`` element but also have a
 path/mirror/snapshot element. The ``/`` is used to organize our data into
@@ -138,6 +158,7 @@ follows::
   mirror: /home/mirror/linux
   mirror/snapshot: /home/mirror/linux/snapshots
   metro: /usr/lib/metro
+
 
 Above, the ``[section path]`` line is a *section annotation*, and it tells the
 Metro parser that the ``path/`` prefix should be applied to all following data
@@ -154,6 +175,7 @@ data a bit more compact::
   mirror/snapshot: $[path/mirror]/snapshots
   metro: /usr/lib/metro
 
+
 Above, we have used an *element reference* of ``$[path/mirror]`` to reference
 our path/mirror element. What this means is that ``path/snapshot`` will have a
 value of ``/home/mirror/linux/snapshots``.
@@ -165,6 +187,7 @@ Also, it's worth pointing out that we could just have well written::
   mirror/snapshot: $[path/mirror]/snapshots
   mirror: /home/mirror/linux
   metro: /usr/lib/metro
+
 
 In other words, it's perfectly OK to use the element reference of
 ``$[path/mirror]`` on a line before the actual definition of ``path/mirror``.
@@ -184,6 +207,7 @@ organize your data as follows::
   snapshot: $[]/snapshot
   source: $[]/$[source/subarch]/funtoo-$[source/subarch]-$[source/version]/$[source/name].tar.bz2
 
+
 Above, we have used two new parser features. Inside ``[section path/mirror]``,
 we can define the ``path/mirror`` element itself by using a blank element name,
 followed by a ``:``. The next parser feature we see above is that we can use
@@ -192,6 +216,7 @@ always reference the value of the element specified in the section annotation.
 Also note that as of Metro 1.1, ``$[:]`` can be used as an alternate form of
 ``$[]``. In addition, as of Metro 1.2.4, ``$[:foo]`` can be used as an
 alternate form of ``$[section-name/foo]``.
+
 
 Collect Annotations
 ~~~~~~~~~~~~~~~~~~~
@@ -204,6 +229,7 @@ from another file by using a *collect annotation*.
 A collect annotation looks like this::
 
   [collect $[path/metro]/myfile.txt]
+
 
 Now, we called these things "collect annotations" for a reason - in Metro, they
 work slightly different than most languages implement ``include`` and
@@ -218,6 +244,7 @@ is complete. But because Metro doesn't care about the order in which data is
 defined, it doesn't have the same concept of "read in the data - right now!"
 that an include or import statement does in other languages.
 
+
 Conditional Collect Annotations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -226,6 +253,7 @@ simple collect annotations can be used to make conditional decisions in Metro,
 as follows::
 
   [collect ./snapshots/$[snapshot/type]]
+
 
 Above, Metro will collect from a file based on the value of the
 ``$[snapshot/type]`` element. This allows for varying definitions of elements
@@ -237,6 +265,7 @@ value that does not map to a file on disk. If it is possible that
 
   [collect ./snapshots/$[snapshot/type:zap]]
 
+
 Using the ``:zap`` modifier, the entire collect argument will be replaced with
 the empty string if ``$[snapshot/type]`` is undefined. If Metro is asked to
 collect an empty string, it will not throw an exception. So this is a handy way
@@ -244,6 +273,7 @@ to conditionally disable collection of a file. But please note that for all
 non-null values of ``$[snapshot/type]``, a corresponding file must exist on
 disk in ``./snapshots/`` or Metro will throw an exception. ``:zap`` is
 explained in more detail in the "Special Variable Expansion" section, below.
+
 
 Multi-line elements
 ~~~~~~~~~~~~~~~~~~~
