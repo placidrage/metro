@@ -11,6 +11,10 @@ used to build install and LiveCD media for Gentoo Linux and its derivatives
 
 TL;DR: `Quick Start Tutorial <http://www.funtoo.org/wiki/Metro_Quick_Start_Tutorial>`_
 
+.. contents::
+   :local:
+   :backlinks: top
+
 
 -------------------------------------------------------------------------------
 How Metro Works
@@ -114,6 +118,10 @@ was done to eliminate side-effects related to data ordering, where changing the
 order in which things are defined in a file can change the behavior of or break
 your code.
 
+.. contents::
+   :local:
+   :backlinks: top
+
 
 First Look
 ~~~~~~~~~~
@@ -131,10 +139,12 @@ whitespace-separated values::
 
   options: ccache replace
 
+
 Sometimes, you need to define an element but leave it blank. To do this, don't
 specify any values after the colon::
 
   options:
+
 
 In Metro, the / character is used to delineate various classes of elements, as
 follows::
